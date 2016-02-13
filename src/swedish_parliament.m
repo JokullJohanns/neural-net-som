@@ -5,10 +5,10 @@ mpdistrict;
 
 mpsex;
 num_members = length(mp_votes);
-num_weights = 349;
+num_weights = 100;
 num_features = 31;
 weights = rand([num_weights, num_features]);
-epochs = 20;
+epochs = 200;
 step_size = 0.2;
 init_hood_size = 50;
 hood_size = init_hood_size;
@@ -53,7 +53,6 @@ for epoch = 1:epochs %outer training loop
                 
     end
     hood_size = hood_size - dec; %Reduce our neighborhood size
-     %Take the floor so it is not a decimal
     
 end
 
@@ -81,9 +80,11 @@ for member = 1:num_members %Loop through the 32 animals one at a time, animal be
         
        
 end
-
+[x,y] = meshgrid([1:10],[1:10]);
+xpos = reshape(x, 1, 100);
+ypos = reshape(y, 1, 100);
 a = ones(1,100)*350;
 a(pos) = 1:349;
-mpparty;
-p = [mpparty;0];
+mpsex;
+p = [mp_sex;0];
 image(p(reshape(a,10,10))+1);
