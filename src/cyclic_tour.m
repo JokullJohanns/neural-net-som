@@ -3,7 +3,7 @@ close all;
 num_weights = 10;
 num_features = 2;
 weights = rand([num_weights, num_features]); %Use a weight matrix of size 100x84 initialized to random numbers between zero and one
-epochs = 200;
+epochs = 20000;
 step_size = 0.2;
 init_hood_size = 2;
 hood_size = init_hood_size;
