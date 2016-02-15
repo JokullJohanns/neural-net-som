@@ -10,7 +10,7 @@ num_features = 31;
 weights = rand([num_weights, num_features]);
 epochs = 200;
 step_size = 0.2;
-init_hood_size = 50;
+init_hood_size = 10;
 hood_size = init_hood_size;
 dec = hood_size*(1/epochs);
 for epoch = 1:epochs %outer training loop
@@ -34,22 +34,22 @@ for epoch = 1:epochs %outer training loop
         end
         [winner, winner_index] = min(norms); %Find the smallest distance and its index
         
+    
+        [x,y] = meshgrid([1:10],[1:10]);
+        xpox = reshape(x,1,100);
+        ypox = reshape(y,1,100);
+
+        C = vertcat(xpox, ypox)';
+        the_winner = [xpox(winner_index),ypox(winner_index)]';
+        Z = mandist(C,the_winner);
         
-        if(winner_index + hood_floor > num_weights)
-            indexEnd = num_weights;
-        else
-            indexEnd = winner_index + hood_floor;
-        end
-        if (winner_index - hood_floor < 1)
-            indexStart = 1;
-        else
-            indexStart = winner_index - hood_floor;
-        end
-        
-        num_neighbors = length(indexStart:indexEnd);
+        [I, IB] = sort(Z);
+        neighbors = IB(1:hood_floor);
+
+        num_neighbors = length([neighbors]);
         p_mat = repmat(p,num_neighbors,1);
-        weight_hood = weights(indexStart:indexEnd,:);
-        weights(indexStart:indexEnd,:) = weight_hood + step_size*(p_mat - weight_hood); %Update the winning weight
+        weight_hood = weights([neighbors],:);
+        weights([neighbors],:) = weight_hood + step_size*(p_mat - weight_hood); %Update the winning weight
                 
     end
     hood_size = hood_size - dec; %Reduce our neighborhood size
