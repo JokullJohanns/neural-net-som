@@ -1,9 +1,6 @@
 clear all;
 close all;
 votes;
-mpdistrict;
-
-mpsex;
 num_members = length(mp_votes);
 num_weights = 100;
 num_features = 31;
@@ -13,9 +10,14 @@ step_size = 0.2;
 init_hood_size = 10;
 hood_size = init_hood_size;
 dec = hood_size*(1/epochs);
+
+[x,y] = meshgrid([1:10],[1:10]);
+xpos = reshape(x,1,100);
+ypos = reshape(y,1,100);
+
 for epoch = 1:epochs %outer training loop
     for member = 1:num_members 
-        hood_floor = floor(hood_size);
+        hood_floor = ceil(hood_size);
         p = mp_votes(member,:); 
         
         %Find the row of the weight matrix with the shortest distance to
@@ -34,17 +36,13 @@ for epoch = 1:epochs %outer training loop
         end
         [winner, winner_index] = min(norms); %Find the smallest distance and its index
         
-    
-        [x,y] = meshgrid([1:10],[1:10]);
-        xpox = reshape(x,1,100);
-        ypox = reshape(y,1,100);
 
-        C = vertcat(xpox, ypox)';
-        the_winner = [xpox(winner_index),ypox(winner_index)]';
+        C = vertcat(xpos, ypos)';
+        the_winner = [xpos(winner_index),ypos(winner_index)]';
         Z = mandist(C,the_winner);
         
         [I, IB] = sort(Z);
-        neighbors = IB(1:hood_floor);
+        neighbors = IB(I <= hood_floor);
 
         num_neighbors = length([neighbors]);
         p_mat = repmat(p,num_neighbors,1);
@@ -80,19 +78,22 @@ for member = 1:num_members %Loop through the 32 animals one at a time, animal be
         
        
 end
-[x,y] = meshgrid([1:10],[1:10]);
-xpos = reshape(x, 1, 100);
-ypos = reshape(y, 1, 100);
+
 a = ones(1,100)*350;
 a(pos) = 1:349;
+
 figure(1);
 mpsex;
+mp_sex(mp_sex == 0) = 1;
+mp_sex(mp_sex == 1) = 2;
 p = [mp_sex;0];
-image(p(reshape(a,10,10))+1);
+image(p(reshape(a,10,10))+ 1);
+
 figure(2);
 mpparty;
 p = [mp_party;0];
-image(p(reshape(a,10,10))+1);
+image(p(reshape(a,10,10)) + 1);
+
 figure(3);
 mpdistrict;
 p = [mp_district;0];
