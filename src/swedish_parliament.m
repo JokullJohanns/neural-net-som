@@ -82,17 +82,18 @@ end
 a = ones(1,100)*350;
 a(pos) = 1:349;
 
-figure(1);
-mpsex;
-mp_sex(mp_sex == 0) = 1;
-mp_sex(mp_sex == 1) = 2;
-p = [mp_sex;0];
-image(p(reshape(a,10,10))+ 1);
-
 figure(2);
 mpparty;
 p = [mp_party;0];
 image(p(reshape(a,10,10)) + 1);
+
+figure(1);
+mpsex;
+
+mp_sex(mp_sex == 1) = 2;
+mp_sex(mp_sex == 0) = 1;
+p = pow2([mp_sex;0]);
+image(p(reshape(a,10,10))+ 1);
 
 figure(3);
 mpdistrict;
