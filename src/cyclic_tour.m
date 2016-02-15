@@ -1,9 +1,9 @@
 clear all;
 close all;
-num_weights = 10;
+num_weights = 20;
 num_features = 2;
 weights = rand([num_weights, num_features]); %Use a weight matrix of size 100x84 initialized to random numbers between zero and one
-epochs = 20000;
+epochs = 2000;
 step_size = 0.2;
 init_hood_size = 2;
 hood_size = init_hood_size;
@@ -40,8 +40,8 @@ for epoch = 1:epochs %outer training loop
         end
         [winner, winner_index] = min(norms); %Find the smallest distance and its index
         
-        index_array = 1:num_cities;
-        shift_size = (num_cities/2)-winner_index+1;
+        index_array = 1:num_weights;
+        shift_size = (num_weights/2)-winner_index+1;
         a = circshift(index_array',shift_size);
         neighbors_index = a([(winner_index+shift_size-hood_size):(winner_index+shift_size+hood_size)]);
         weights([neighbors_index]);
