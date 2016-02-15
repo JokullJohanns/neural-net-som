@@ -1,5 +1,5 @@
-% Coding: Male 0, Female 1
-
+% Coding: Male 1, Female 2
+colormap([0 0 0;0 0 1;1 0 1]);
 mp_sex = [0
 	 0
 	 0
