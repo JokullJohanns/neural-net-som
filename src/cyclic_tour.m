@@ -1,6 +1,6 @@
 clear all;
 close all;
-num_weights = 20;
+num_weights = 100;
 num_features = 2;
 weights = rand([num_weights, num_features]); %Use a weight matrix of size 100x84 initialized to random numbers between zero and one
 epochs = 2000;
