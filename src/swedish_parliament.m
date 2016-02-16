@@ -5,11 +5,12 @@ num_members = length(mp_votes);
 num_weights = 100;
 num_features = 31;
 weights = rand([num_weights, num_features]);
-epochs = 200;
+epochs = 2000;
 step_size = 0.2;
 init_hood_size = 10;
 hood_size = init_hood_size;
 dec = hood_size*(1/epochs);
+output_dimension = 1;
 
 [x,y] = meshgrid([1:10],[1:10]);
 xpos = reshape(x,1,100);
@@ -36,19 +37,36 @@ for epoch = 1:epochs %outer training loop
         end
         [winner, winner_index] = min(norms); %Find the smallest distance and its index
         
+        if(output_dimension == 1)
+            if(winner_index + hood_floor > num_weights)
+                indexEnd = num_weights;
+            else
+             indexEnd = winner_index + hood_floor;
+            end
+            if (winner_index - hood_floor < 1)
+             indexStart = 1;
+            else
+             indexStart = winner_index - hood_floor;
+            end
+            
+            num_neighbors = length(indexStart:indexEnd);
+            p_mat = repmat(p,num_neighbors,1);
+            weight_hood = weights(indexStart:indexEnd,:);
+            weights(indexStart:indexEnd,:) = weight_hood + step_size*(p_mat - weight_hood);
+        else
+            C = vertcat(xpos, ypos)';
+            the_winner = [xpos(winner_index),ypos(winner_index)]';
+            Z = mandist(C,the_winner);
 
-        C = vertcat(xpos, ypos)';
-        the_winner = [xpos(winner_index),ypos(winner_index)]';
-        Z = mandist(C,the_winner);
+            [I, IB] = sort(Z);
+            neighbors = IB(I <= hood_floor);
+
+            num_neighbors = length([neighbors]);
         
-        [I, IB] = sort(Z);
-        neighbors = IB(I <= hood_floor);
-
-        num_neighbors = length([neighbors]);
-        p_mat = repmat(p,num_neighbors,1);
-        weight_hood = weights([neighbors],:);
-        weights([neighbors],:) = weight_hood + step_size*(p_mat - weight_hood); %Update the winning weight
-                
+            p_mat = repmat(p,num_neighbors,1);
+            weight_hood = weights([neighbors],:);
+            weights([neighbors],:) = weight_hood + step_size*(p_mat - weight_hood); %Update the winning weight
+        end
     end
     hood_size = hood_size - dec; %Reduce our neighborhood size
     
